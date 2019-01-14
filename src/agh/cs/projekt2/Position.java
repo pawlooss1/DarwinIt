@@ -60,8 +60,9 @@ public class Position {
         int y = this.y + other.y;
         return new Position(x, y);
     }
-    public Position sub(Position other){
+    public Position sub(Position other) {
         int x = this.x - other.x;
         int y = this.y - other.y;
         return new Position(x, y);
+    }
 }
