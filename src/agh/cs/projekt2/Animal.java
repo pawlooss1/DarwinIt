@@ -2,6 +2,7 @@ package agh.cs.projekt2;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 public class Animal {
     private Position position;
@@ -15,41 +16,43 @@ public class Animal {
         this.energy = 1000;
         this.direction = MapDirection.NORTH;
         this.gender = gender;
-        this.genotype = Animal.initRandomGenotype();
+        this.genotype = initRandomGenotype();
     }
 
     public Animal(Animal mom, Animal dad) {
         this.position = mom.position;
         this.energy = 1000;
         this.direction = dad.direction;
-
+        this.genotype = combineParentsGenotype(mom, dad);
+        double random = Math.random();
+        if (random < 0.5)
+            this.gender = Gender.MALE;
+        else
+            this.gender = Gender.FEMALE;
     }
 
     private static HashMap<MoveDirection, Integer> combineParentsGenotype(Animal mom, Animal dad) {
         HashMap<MoveDirection, Integer> genotype = new HashMap<>();
-        double random = Math.random();
-        if (random < 0.5)
-            genotype.put(MoveDirection.FORWARD, dad.genotype.get(MoveDirection.FORWARD));
-        else ()
+        List<MoveDirection> allDirections = MoveDirection.getAllDirections();
+        double random;
+        for (MoveDirection direction : allDirections) {
+            random = Math.random();
+            if (random < 0.5)
+                genotype.put(direction, dad.genotype.get(direction));
+            else
+                genotype.put(direction, mom.genotype.get(direction));
+        }
+        return genotype;
     }
 
     private static HashMap<MoveDirection, Integer> initRandomGenotype() {
         HashMap<MoveDirection, Integer> genotype = new HashMap<>();
-        int random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.FORWARD, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.BACKWARD, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.LEFT, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.RIGHT, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.FORWARD_LEFT, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.FORWARD_RIGHT, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.BACKWARD_LEFT, random);
-        random = (int)(Math.random() * 10 + 1);
-        genotype.put(MoveDirection.BACKWARD_RIGHT, random);
+        List<MoveDirection> allDirections = MoveDirection.getAllDirections();
+        int random;
+        for (MoveDirection direction : allDirections) {
+            random = (int) (Math.random() * 10 + 1);
+            genotype.put(direction, random);
+        }
+        return genotype;
     }
 }
