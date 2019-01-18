@@ -7,6 +7,10 @@ public class Plant {
         this.position = position;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
     @Override
     public String toString() {
         return "*";

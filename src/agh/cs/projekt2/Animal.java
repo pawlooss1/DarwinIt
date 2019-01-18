@@ -31,6 +31,14 @@ public class Animal {
             this.gender = Gender.FEMALE;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
+    public void eat() {
+        this.energy += 10;
+    }
+
     private static HashMap<MoveDirection, Integer> combineParentsGenotype(Animal mom, Animal dad) {
         HashMap<MoveDirection, Integer> genotype = new HashMap<>();
         List<MoveDirection> allDirections = MoveDirection.getAllDirections();
