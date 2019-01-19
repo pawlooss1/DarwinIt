@@ -31,30 +31,70 @@ public enum MapDirection {
         }
         return "";
     }
-    public MapDirection next() {
+
+    public MapDirection rotateRight() {
         switch (this) {
             case NORTH:
-                return EAST;
+                return NORTH_EAST;
             case SOUTH:
-                return WEST;
+                return SOUTH_WEST;
             case EAST:
-                return SOUTH;
+                return SOUTH_EAST;
             case WEST:
+                return NORTH_WEST;
+            case NORTH_EAST:
+                return EAST;
+            case NORTH_WEST:
                 return NORTH;
+            case SOUTH_EAST:
+                return SOUTH;
+            case SOUTH_WEST:
+                return WEST;
         }
         return NORTH;
     }
-    public MapDirection previous() {
+
+    public int computeDeltaX() {
         switch (this) {
             case NORTH:
-                return WEST;
-            case SOUTH:
-                return EAST;
-            case EAST:
-                return NORTH;
+                return 0;
+            case NORTH_WEST:
+                return 1;
             case WEST:
-                return SOUTH;
+                return 1;
+            case SOUTH_WEST:
+                return 1;
+            case SOUTH:
+                return 0;
+            case SOUTH_EAST:
+                return -1;
+            case EAST:
+                return -1;
+            case NORTH_EAST:
+                return -1;
         }
-        return NORTH;
+        return 0;
+    }
+
+    public int computeDeltaY() {
+        switch (this) {
+            case NORTH:
+                return 1;
+            case NORTH_WEST:
+                return 1;
+            case WEST:
+                return 0;
+            case SOUTH_WEST:
+                return -1;
+            case SOUTH:
+                return -1;
+            case SOUTH_EAST:
+                return -1;
+            case EAST:
+                return 0;
+            case NORTH_EAST:
+                return 1;
+        }
+        return 0;
     }
 }

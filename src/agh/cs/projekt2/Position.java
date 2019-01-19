@@ -4,12 +4,13 @@ public class Position {
     public final int x;
     public final int y;
 
-    public Position(int x, int y){
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         return "(" + this.x + "," + this.y + ")";
     }
 
@@ -33,33 +34,32 @@ public class Position {
         return result;
     }
 
-    public boolean smaller(Position other){
-        if(this.x <= other.x && this.y <= other.y)
-            return true;
-        else
-            return false;
+    public boolean smaller(Position other) {
+        return this.x <= other.x && this.y <= other.y;
     }
-    public boolean larger(Position other){
-        if(this.x >= other.x && this.y >= other.y)
-            return true;
-        else
-            return false;
+
+    public boolean larger(Position other) {
+        return this.x >= other.x && this.y >= other.y;
     }
-    public Position upperRight(Position other){
+
+    public Position upperRight(Position other) {
         int x = Math.max(this.x, other.x);
         int y = Math.max(this.y, other.y);
         return new Position(x, y);
     }
-    public Position lowerLeft(Position other){
+
+    public Position lowerLeft(Position other) {
         int x = Math.min(this.x, other.x);
         int y = Math.min(this.y, other.y);
         return new Position(x, y);
     }
-    public Position add(Position other){
+
+    public Position add(Position other) {
         int x = this.x + other.x;
         int y = this.y + other.y;
         return new Position(x, y);
     }
+
     public Position sub(Position other) {
         int x = this.x - other.x;
         int y = this.y - other.y;

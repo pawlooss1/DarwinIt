@@ -25,4 +25,26 @@ public enum MoveDirection {
         result.add(MoveDirection.LEFT);
         return result;
     }
+
+    public int howManyRotations() {
+        switch (this) {
+            case FORWARD:
+                return 0;
+            case FORWARD_RIGHT:
+                return 1;
+            case RIGHT:
+                return 2;
+            case BACKWARD_RIGHT:
+                return 3;
+            case BACKWARD:
+                return 4;
+            case BACKWARD_LEFT:
+                return 5;
+            case LEFT:
+                return 6;
+            case FORWARD_LEFT:
+                return 7;
+        }
+        return 0;
+    }
 }
