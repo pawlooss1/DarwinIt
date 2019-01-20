@@ -11,7 +11,9 @@ public class Animal {
     private final Gender gender;
     private final HashMap<MoveDirection, Integer> genotype;
     private int geneSum;
-    private static final int startingEnergy = 170;
+    private int possibleChildren;
+    private int age;
+    private static final int startingEnergy = 300;
 
     public Animal(Position position, Gender gender) { // konstruktor dla zwierząt początkowych
         this.position = position;
@@ -20,14 +22,18 @@ public class Animal {
         this.gender = gender;
         this.genotype = initRandomGenotype();
         this.geneSum = initGeneSum();
+        this.possibleChildren = 6;
     }
 
     public Animal(Animal mom, Animal dad) {
+        mom.possibleChildren--;
+        dad.possibleChildren--;
         this.position = mom.position;
-        this.energy = (mom.energy + dad.energy + startingEnergy) / 3;
+        this.energy = startingEnergy;
         this.direction = dad.direction;
         this.genotype = combineParentsGenotype(mom, dad);
         this.geneSum = initGeneSum();
+        this.possibleChildren = 4;
         double random = Math.random();
         if (random < 0.5)
             this.gender = Gender.MALE;
@@ -37,7 +43,7 @@ public class Animal {
 
     private int initGeneSum() {
         int result = 0;
-        for(Integer i : this.genotype.values())
+        for (Integer i : this.genotype.values())
             result += i;
         return result;
     }
@@ -58,17 +64,30 @@ public class Animal {
         return gender;
     }
 
+    public boolean canHaveChildren() {
+        return (age >= 10) && (energy > startingEnergy / 2);
+    }
+
+    public void incrementAge() {
+        this.age++;
+        this.energy--;
+    }
+
+    public void copulate() {
+        this.energy -= (startingEnergy / 2);
+    }
+
     @Override
     public String toString() {
         return this.gender.toString();
     }
 
     public void eat() {
-        this.energy += 5;
+        this.energy += 50;
     }
 
-    public void lowerEnergy() {
-        this.energy--;
+    public boolean isOldEnoughToDie() {
+        return (this.age > 1000 || this.energy <= 0);
     }
 
     private static HashMap<MoveDirection, Integer> combineParentsGenotype(Animal mom, Animal dad) {
@@ -96,7 +115,7 @@ public class Animal {
         return genotype;
     }
 
-    public Position move(WorldMap map){
+    public Position move(WorldMap map) {
         MoveDirection moveDirection = this.chooseNextStep();
         MapDirection mapDirection = this.rotate(moveDirection);
         int deltaX = mapDirection.computeDeltaX();
@@ -106,7 +125,7 @@ public class Animal {
         return new Position(nextX, nextY);
     }
 
-    private MapDirection rotate(MoveDirection moveDirection){
+    private MapDirection rotate(MoveDirection moveDirection) {
         MapDirection result = this.direction;
         int rotationsToDo = moveDirection.howManyRotations();
         for (int i = 0; i < rotationsToDo; i++)
@@ -118,7 +137,7 @@ public class Animal {
         int currentScore = 0;
         int stepThreshold = (int) (Math.random() * geneSum + 1);
         List<MoveDirection> allDirections = MoveDirection.getAllDirections();
-        for(MoveDirection direction : allDirections) {
+        for (MoveDirection direction : allDirections) {
             currentScore += genotype.get(direction);
             if (currentScore >= stepThreshold)
                 return direction;

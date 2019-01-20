@@ -1,7 +1,6 @@
 package agh.cs.projekt2;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,11 +11,11 @@ public class DayShifter {
         this.map = map;
     }
 
-    public void shiftDay(int dayNo, MapDrawer drawer) {
+    public void shiftDay(int dayNo) {
         HashMap<Position, Animal> animalsWithPositions = map.getAnimals();
         List<Animal> animals = new ArrayList<>(animalsWithPositions.values());
         HashMap<Position, Plant> plants = map.getPlants();
-        if (!checkOverpopulation(animals, animalsWithPositions, drawer)) {
+        if (!checkOverpopulation(animals, animalsWithPositions)) {
             handlePlants(dayNo, plants);
             handleAnimals(animals, animalsWithPositions, plants);
         }
@@ -32,32 +31,39 @@ public class DayShifter {
         }
     }
 
-    private boolean checkOverpopulation(List<Animal> animals, HashMap<Position, Animal> animalsWithPositions, MapDrawer drawer) {
+    private boolean checkOverpopulation(List<Animal> animals, HashMap<Position, Animal> animalsWithPositions) {
         int population = animalsWithPositions.size();
         if (population >= map.getWidth() * map.getHeight() / 6) {
-            makeCataclysm(animals, animalsWithPositions, drawer);
+            performCataclysm(animals, animalsWithPositions);
             return true;
         }
         return false;
     }
 
-    private void makeCataclysm(List<Animal> animals, HashMap<Position, Animal> animalsWithPositions, MapDrawer drawer) {
+    private void performCataclysm(List<Animal> animals, HashMap<Position, Animal> animalsWithPositions) {
         int killerIndex = 0;
-        int animalsToKill = animalsWithPositions.size() * 9 / 10;
+        int animalsToKill = animalsWithPositions.size() * 8 / 10;
+        printCataclysmMessage();
         System.out.print("Population before cataclysm: " + animalsWithPositions.size() + "\n");
         for (Animal animal : animals) {
             System.out.print("Disaster killed an animal at position: " + animal.getPosition().toString() + "\n");
             animalsWithPositions.remove(animal.getPosition());
+            try {
+                Thread.sleep(50);
+            } catch (Exception e) {
+            }
             if (killerIndex >= animalsToKill)
                 break;
             killerIndex++;
         }
-        System.out.print("Population after cataclysm: " + animalsWithPositions.size() + "\n");
-        drawer.drawMap(0);
+        printCataclysmMessage();
+    }
+
+    private void printCataclysmMessage() {
         for (int i = 0; i < map.getHeight(); i++)
             System.out.print("CATACLYSM!CATACLYSM!CATACLYSM!CATACLYSM!CATACLYSM!\n");
         try {
-            Thread.sleep(200);
+            Thread.sleep(1000);
         } catch (Exception e) {
         }
     }
@@ -80,7 +86,7 @@ public class DayShifter {
             animalsWithPositions.put(nextPosition, animal);
             animal.setPosition(nextPosition);
         } else tryToReproduce(animal, animalsWithPositions.get(nextPosition), animalsWithPositions);
-        animal.lowerEnergy();
+        animal.incrementAge();
     }
 
     private void tryToEat(Animal animal, HashMap<Position, Plant> plants) {
@@ -91,43 +97,43 @@ public class DayShifter {
     }
 
     private void cleanAnimal(Animal animal, HashMap<Position, Animal> animalsWithPositions) {
-        if (animal.getEnergy() <= 0) {
+        if (animal.isOldEnoughToDie()) {
             animalsWithPositions.remove(animal.getPosition());
         }
     }
 
     private void tryToReproduce(Animal movingAnimal, Animal standingAnimal, HashMap<Position, Animal> animalsWithPositions) {
-        if (movingAnimal.getGender().isOppositeGender(standingAnimal.getGender())
-                && movingAnimal.getEnergy() >= 100 && movingAnimal.getEnergy() <= 500
-                && standingAnimal.getEnergy() >= 100 && standingAnimal.getEnergy() <= 500) {
-            if (movingAnimal.getGender() == Gender.MALE) {
-                Animal child = new Animal(standingAnimal, movingAnimal);
-                moveAnimal(standingAnimal, animalsWithPositions);
-                animalsWithPositions.put(child.getPosition(), child);
-            } else {
-                Animal child = new Animal(movingAnimal, standingAnimal);
-                moveAnimal(movingAnimal, animalsWithPositions);
-                animalsWithPositions.put(child.getPosition(), child);
+        if (movingAnimal.getGender().isOppositeGender(standingAnimal.getGender())) {
+            if (movingAnimal.canHaveChildren() && standingAnimal.canHaveChildren()) {
+                standingAnimal.copulate();
+                movingAnimal.copulate();
+                if (movingAnimal.getGender() == Gender.MALE) {
+                    Animal child = new Animal(standingAnimal, movingAnimal);
+                    moveAnimal(standingAnimal, animalsWithPositions);
+                    animalsWithPositions.put(child.getPosition(), child);
+                } else {
+                    Animal child = new Animal(movingAnimal, standingAnimal);
+                    moveAnimal(movingAnimal, animalsWithPositions);
+                    animalsWithPositions.put(child.getPosition(), child);
+                }
             }
         }
     }
 
     private void handlePlants(int dayNo, HashMap<Position, Plant> plants) {
-        if (dayNo % 9 == 0) {
-            int xCoord = (int) (Math.random() * map.getWidth());
-            int yCoord = (int) (Math.random() * map.getHeight());
-            Position position = new Position(xCoord, yCoord);
-            Plant plant = new Plant(position);
+        int xCoord = (int) (Math.random() * map.getWidth());
+        int yCoord = (int) (Math.random() * map.getHeight());
+        Position position = new Position(xCoord, yCoord);
+        Plant plant = new Plant(position);
+        plants.put(position, plant);
+        if (dayNo % 2 == 0) {
+            int xRange = map.getJungleWidth();
+            int yRange = map.getJugleHeight();
+            xCoord = (int) (Math.random() * xRange + map.getJungleLowerLeftCorner().x);
+            yCoord = (int) (Math.random() * yRange + map.getJungleLowerLeftCorner().y);
+            position = new Position(xCoord, yCoord);
+            plant = new Plant(position);
             plants.put(position, plant);
-            if (dayNo % 2 == 0) {
-                int xRange = map.getJungleWidth();
-                int yRange = map.getJugleHeight();
-                xCoord = (int) (Math.random() * xRange + map.getJungleLowerLeftCorner().x);
-                yCoord = (int) (Math.random() * yRange + map.getJungleLowerLeftCorner().y);
-                position = new Position(xCoord, yCoord);
-                plant = new Plant(position);
-                plants.put(position, plant);
-            }
         }
     }
 }

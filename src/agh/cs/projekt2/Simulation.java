@@ -12,10 +12,16 @@ public class Simulation {
         initialPosition = new Position(24, 7);
         Animal eva = new Animal(initialPosition, Gender.FEMALE);
         eden.addAnimal(eva);
-        initialPosition = new Position(40, 9);
+        initialPosition = new Position(25, 9);
         adam = new Animal(initialPosition, Gender.MALE);
         eden.addAnimal(adam);
-        initialPosition = new Position(4, 5);
+        initialPosition = new Position(27, 10);
+        eva = new Animal(initialPosition, Gender.FEMALE);
+        eden.addAnimal(eva);
+        initialPosition = new Position(30, 12);
+        adam = new Animal(initialPosition, Gender.MALE);
+        eden.addAnimal(adam);
+        initialPosition = new Position(33, 10);
         eva = new Animal(initialPosition, Gender.FEMALE);
         eden.addAnimal(eva);
         MapDrawer drawer = new MapDrawer(eden);
@@ -25,7 +31,7 @@ public class Simulation {
             try {
                 drawer.drawMap(dayCounter);
                 Thread.sleep(80);
-                shifter.shiftDay(dayCounter, drawer);
+                shifter.shiftDay(dayCounter);
                 Process process = Runtime.getRuntime().exec("clear");
             } catch (Exception e) {
                 e.printStackTrace();
