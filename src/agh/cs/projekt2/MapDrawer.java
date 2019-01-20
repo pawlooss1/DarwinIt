@@ -7,8 +7,13 @@ public class MapDrawer {
         this.map = map;
     }
 
-    public void draw() {
+    public void drawMap(int dayNo) {
+        System.out.print("DAY: " + dayNo + " Population: " + map.getAnimals().size() + "\n");
+        for (int i = 0; i < map.getWidth() + 2; i++)
+            System.out.print("-");
+        System.out.print("\n");
         for (int row = map.getHeight() - 1; row >= 0; row--) {
+            System.out.print("|");
             for (int column = 0; column < map.getWidth(); column++) {
                 Position currentPosition = new Position(column, row);
                 if (map.isOccupied(currentPosition))
@@ -18,7 +23,10 @@ public class MapDrawer {
                 else
                     System.out.print(" ");
             }
-            System.out.print("\n");
+            System.out.print("|\n");
         }
+        for (int i = 0; i < map.getWidth() + 2; i++)
+            System.out.print("-");
+        System.out.print("\n");
     }
 }

@@ -11,10 +11,11 @@ public class Animal {
     private final Gender gender;
     private final HashMap<MoveDirection, Integer> genotype;
     private int geneSum;
+    private static final int startingEnergy = 170;
 
     public Animal(Position position, Gender gender) { // konstruktor dla zwierząt początkowych
         this.position = position;
-        this.energy = 1000;
+        this.energy = startingEnergy * 3;
         this.direction = MapDirection.NORTH;
         this.gender = gender;
         this.genotype = initRandomGenotype();
@@ -23,7 +24,7 @@ public class Animal {
 
     public Animal(Animal mom, Animal dad) {
         this.position = mom.position;
-        this.energy = 1000;
+        this.energy = (mom.energy + dad.energy + startingEnergy) / 3;
         this.direction = dad.direction;
         this.genotype = combineParentsGenotype(mom, dad);
         this.geneSum = initGeneSum();
@@ -49,8 +50,25 @@ public class Animal {
         this.position = position;
     }
 
+    public int getEnergy() {
+        return energy;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    @Override
+    public String toString() {
+        return this.gender.toString();
+    }
+
     public void eat() {
-        this.energy += 10;
+        this.energy += 5;
+    }
+
+    public void lowerEnergy() {
+        this.energy--;
     }
 
     private static HashMap<MoveDirection, Integer> combineParentsGenotype(Animal mom, Animal dad) {
@@ -78,12 +96,14 @@ public class Animal {
         return genotype;
     }
 
-    public Position move(){
+    public Position move(WorldMap map){
         MoveDirection moveDirection = this.chooseNextStep();
         MapDirection mapDirection = this.rotate(moveDirection);
         int deltaX = mapDirection.computeDeltaX();
         int deltaY = mapDirection.computeDeltaY();
-        return new Position((position.x + deltaX), (position.y + deltaY));
+        int nextX = (position.x + deltaX + map.getWidth()) % map.getWidth();
+        int nextY = (position.y + deltaY + map.getHeight()) % map.getHeight();
+        return new Position(nextX, nextY);
     }
 
     private MapDirection rotate(MoveDirection moveDirection){

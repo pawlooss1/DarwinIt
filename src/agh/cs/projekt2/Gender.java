@@ -14,4 +14,20 @@ public enum Gender {
         }
         return "";
     }
+
+    public boolean isOppositeGender(Gender gender) {
+        switch (this) {
+            case MALE:
+                if (gender == MALE)
+                    return false;
+                else
+                    return true;
+            case FEMALE:
+                if (gender == FEMALE)
+                    return false;
+                else
+                    return true;
+        }
+        return false;
+    }
 }
